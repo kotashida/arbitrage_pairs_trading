@@ -1,5 +1,7 @@
-yfinance
-pandas
-numpy
-statsmodels
-lxml
+yfinance==0.2.64
+pandas==2.3.0
+numpy==2.3.1
+statsmodels==0.14.4
+lxml==6.0.0
+scipy==1.16.0
+beautifulsoup4==4.13.4

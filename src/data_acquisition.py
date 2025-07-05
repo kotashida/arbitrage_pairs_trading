@@ -1,6 +1,7 @@
 import yfinance as yf
 import pandas as pd
 import time
+import os
 
 def get_sp500_tickers():
     """Fetches S&P 500 tickers from Wikipedia."""
@@ -56,7 +57,9 @@ if __name__ == "__main__":
             print(f"Failed to download data for {len(failed_list)} tickers: {failed_list}")
 
         # Save data for later use
-        output_path = r"C:\Users\shida\OneDrive\Programming\arbitrage_pairs_trading\data\sp500_adj_close.csv"
+        data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data'))
+        os.makedirs(data_dir, exist_ok=True)
+        output_path = os.path.join(data_dir, "sp500_adj_close.csv")
         adj_close_data.to_csv(output_path)
         print(f"Historical data saved to {output_path}")
     else:

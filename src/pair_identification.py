@@ -2,11 +2,9 @@ import pandas as pd
 import numpy as np
 import statsmodels.api as sm
 from statsmodels.tsa.stattools import coint
+import os
 
-def load_data(file_path):
-    """Loads historical adjusted close price data from a CSV file."""
-    data = pd.read_csv(file_path, index_col=0, parse_dates=True)
-    return data
+from utils import load_data, get_data_dir
 
 def find_cointegrated_pairs(data, significance_level=0.05):
     """Finds cointegrated pairs of stocks using the Engle-Granger test."""
@@ -43,7 +41,8 @@ def find_cointegrated_pairs(data, significance_level=0.05):
     return pairs
 
 if __name__ == "__main__":
-    file_path = r"C:\Users\shida\OneDrive\Programming\arbitrage_pairs_trading\data\sp500_adj_close.csv"
+    data_dir = get_data_dir()
+    file_path = os.path.join(data_dir, "sp500_adj_close.csv")
     
     print(f"Loading data from {file_path}...")
     stock_data = load_data(file_path)

@@ -1,12 +1,9 @@
 import pandas as pd
 import numpy as np
 import statsmodels.api as sm
+import os
 
-def load_data(file_path):
-    """Loads historical adjusted close price data from a CSV file."""
-    data = pd.read_csv(file_path, index_col=0, parse_dates=True)
-    # data.columns = data.columns.droplevel(0) # Drop the 'Adj Close' level if it exists
-    return data
+from utils import load_data, get_data_dir
 
 def calculate_hedge_ratio_and_spread(series1, series2):
     """Calculates the hedge ratio (beta) and spread using OLS regression."""
@@ -34,10 +31,9 @@ def generate_signals(spread, entry_zscore=2.0, exit_zscore=0.0):
     return signals
 
 class Backtester:
-    def __init__(self, initial_capital=100000, transaction_cost_per_trade=0.001):
+    def __init__(self, initial_capital=100000):
         self.initial_capital = initial_capital
         self.capital = initial_capital
-        self.transaction_cost_per_trade = transaction_cost_per_trade
         self.portfolio_value = pd.Series(dtype=float)
         self.positions = {'asset1': 0, 'asset2': 0}
         self.in_trade = False
@@ -81,9 +77,6 @@ class Backtester:
 
                     self.positions['asset1'] = shares1
                     self.positions['asset2'] = -shares2 # Short asset2
-                    
-                    self.capital -= (shares1 * price1 * self.transaction_cost_per_trade) + \
-                                    (shares2 * price2 * self.transaction_cost_per_trade)
                     self.in_trade = True
 
                 elif short_entry: # Sell spread
@@ -93,9 +86,6 @@ class Backtester:
 
                     self.positions['asset1'] = -shares1 # Short asset1
                     self.positions['asset2'] = shares2
-
-                    self.capital -= (shares1 * price1 * self.transaction_cost_per_trade) + \
-                                    (shares2 * price2 * self.transaction_cost_per_trade)
                     self.in_trade = True
 
             elif self.in_trade:
@@ -107,17 +97,14 @@ class Backtester:
                     self.capital += self.positions['asset1'] * price1 + \
                                     self.positions['asset2'] * price2
                     
-                    # Account for transaction costs
-                    self.capital -= (abs(self.positions['asset1']) * price1 * self.transaction_cost_per_trade) + \
-                                    (abs(self.positions['asset2']) * price2 * self.transaction_cost_per_trade)
-
                     self.positions = {'asset1': 0, 'asset2': 0}
                     self.in_trade = False
 
         return self.portfolio_value
 
 if __name__ == "__main__":
-    data_file_path = r"C:\Users\shida\OneDrive\Programming\arbitrage_pairs_trading\data\sp500_adj_close.csv"
+    data_dir = get_data_dir()
+    data_file_path = os.path.join(data_dir, "sp500_adj_close.csv")
     
     stock_data = load_data(data_file_path)
     
@@ -154,5 +141,6 @@ if __name__ == "__main__":
             print(f"Total Return: {((portfolio_value.iloc[-1] - backtester.initial_capital) / backtester.initial_capital * 100):.2f}%")
 
             # Save portfolio value for analysis
-            portfolio_value.to_csv(r"C:\Users\shida\OneDrive\Programming\arbitrage_pairs_trading\data\portfolio_value.csv")
-            print("Portfolio value saved to data/portfolio_value.csv")
+            portfolio_value_path = os.path.join(data_dir, "portfolio_value.csv")
+            portfolio_value.to_csv(portfolio_value_path)
+            print(f"Portfolio value saved to {portfolio_value_path}")

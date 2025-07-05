@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+import numpy as np
 
 from data_acquisition import download_historical_data, get_sp500_tickers
 from pair_identification import find_cointegrated_pairs, load_data
@@ -9,7 +10,9 @@ from performance_analysis import calculate_returns, calculate_sharpe_ratio, calc
 
 def main():
     # 1. Data Acquisition
-    data_file_path = r"C:\Users\shida\OneDrive\Programming\arbitrage_pairs_trading\data\sp500_adj_close.csv"
+    # Use relative paths for data files
+    data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data'))
+    data_file_path = os.path.join(data_dir, "sp500_adj_close.csv")
     
     if not os.path.exists(data_file_path):
         print("Historical data not found. Downloading data...")
@@ -25,6 +28,7 @@ def main():
             if failed_list:
                 print(f"Failed to download data for {len(failed_list)} tickers: {failed_list}")
 
+            os.makedirs(data_dir, exist_ok=True)
             adj_close_data.to_csv(data_file_path)
             print(f"Historical data saved to {data_file_path}")
         else:
@@ -75,7 +79,7 @@ def main():
         backtester = Backtester(initial_capital=100000)
         portfolio_value = backtester.run_backtest(stock_data, signals, asset1_ticker, asset2_ticker)
         
-        portfolio_value_path = r"C:\Users\shida\OneDrive\Programming\arbitrage_pairs_trading\data\portfolio_value.csv"
+        portfolio_value_path = os.path.join(data_dir, "portfolio_value.csv")
         portfolio_value.to_csv(portfolio_value_path)
         print(f"Portfolio value saved to {portfolio_value_path}")
 
@@ -92,7 +96,10 @@ def main():
         volatility = calculate_volatility(returns)
 
         print(f"Sharpe Ratio: {sharpe_ratio:.4f}")
-        print(f"Sortino Ratio: {sortino_ratio:.4f}")
+        if not np.isnan(sortino_ratio):
+            print(f"Sortino Ratio: {sortino_ratio:.4f}")
+        else:
+            print("Sortino Ratio: N/A (no downside deviation)")
         print(f"Max Drawdown: {max_drawdown:.4f}")
         print(f"Volatility (Annualized): {volatility:.4f}")
 

@@ -1,11 +1,9 @@
 import pandas as pd
 import numpy as np
 import statsmodels.api as sm
+import os
 
-def load_data(file_path):
-    """Loads historical adjusted close price data from a CSV file."""
-    data = pd.read_csv(file_path, index_col=0, parse_dates=True)
-    return data
+from utils import load_data, get_data_dir
 
 def calculate_hedge_ratio_and_spread(series1, series2):
     """Calculates the hedge ratio (beta) and spread using OLS regression."""
@@ -34,7 +32,8 @@ def generate_signals(spread, entry_zscore=2.0, exit_zscore=0.0):
     return signals
 
 if __name__ == "__main__":
-    data_file_path = r"C:\Users\shida\OneDrive\Programming\arbitrage_pairs_trading\data\sp500_adj_close.csv"
+    data_dir = get_data_dir()
+    data_file_path = os.path.join(data_dir, "sp500_adj_close.csv")
     
     # Demonstrate with a hardcoded pair
     cointegrated_pairs = [("AMZN", "NVDA")] 
@@ -67,3 +66,8 @@ if __name__ == "__main__":
 
         print("Generated signals (last 5 rows):")
         print(signals.tail())
+
+        # Save signals for backtesting
+        signals_path = os.path.join(data_dir, "signals.csv")
+        signals.to_csv(signals_path)
+        print(f"Signals saved to {signals_path}")

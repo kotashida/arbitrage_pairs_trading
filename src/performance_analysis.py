@@ -1,5 +1,8 @@
 import pandas as pd
 import numpy as np
+import os
+
+from utils import get_data_dir
 
 def calculate_returns(portfolio_value):
     """Calculates daily returns from a portfolio value series."""
@@ -38,7 +41,8 @@ def calculate_volatility(returns):
 
 if __name__ == "__main__":
     # Load portfolio value data for demonstration
-    portfolio_value_file = r"C:\Users\shida\OneDrive\Programming\arbitrage_pairs_trading\data\portfolio_value.csv"
+    data_dir = get_data_dir()
+    portfolio_value_file = os.path.join(data_dir, "portfolio_value.csv")
     portfolio_value = pd.read_csv(portfolio_value_file, index_col=0, parse_dates=True).squeeze()
 
     print("Calculating performance metrics...")
@@ -51,6 +55,9 @@ if __name__ == "__main__":
     
     print(f"Total Return: {((portfolio_value.iloc[-1] - portfolio_value.iloc[0]) / portfolio_value.iloc[0] * 100):.2f}%")
     print(f"Sharpe Ratio: {sharpe_ratio:.4f}")
-    print(f"Sortino Ratio: {sortino_ratio:.4f}")
+    if not np.isnan(sortino_ratio):
+        print(f"Sortino Ratio: {sortino_ratio:.4f}")
+    else:
+        print("Sortino Ratio: N/A (no downside deviation)")
     print(f"Max Drawdown: {max_drawdown:.4f}")
     print(f"Volatility (Annualized): {volatility:.4f}")
