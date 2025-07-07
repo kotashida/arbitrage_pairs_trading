@@ -142,5 +142,5 @@ if __name__ == "__main__":
 
             # Save portfolio value for analysis
             portfolio_value_path = os.path.join(data_dir, "portfolio_value.csv")
-            portfolio_value.to_csv(portfolio_value_path)
+            portfolio_value.to_csv(portfolio_value_path, header=['Portfolio_Value'])
             print(f"Portfolio value saved to {portfolio_value_path}")

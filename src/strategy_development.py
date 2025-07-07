@@ -10,7 +10,7 @@ def calculate_hedge_ratio_and_spread(series1, series2):
     X = sm.add_constant(series2)
     model = sm.OLS(series1, X)
     results = model.fit()
-    beta = results.params[1]
+    beta = results.params.iloc[1]
     spread = series1 - beta * series2
     return beta, spread
 
