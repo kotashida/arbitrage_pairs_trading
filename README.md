@@ -67,7 +67,7 @@ Individual modules within the `src/` directory can also be used independently fo
 
 The `data/` directory is intended to store historical financial data. Currently, it contains:
 
--   `portfolio_value.csv`: Likely stores the simulated portfolio value over time from backtesting.
+-   `portfolio_value.csv`: Stores the simulated portfolio value over time from backtesting.
 -   `sp500_adj_close.csv`: Contains historical adjusted close prices for S&P 500 constituents, used for pair identification and backtesting.
 
 ## Project Structure
