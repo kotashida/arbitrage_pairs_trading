@@ -29,11 +29,10 @@ To set up the project locally, follow these steps:
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/your-username/arbitrage_pairs_trading.git
+    git clone https://github.com/kotashida/arbitrage_pairs_trading.git
     cd arbitrage_pairs_trading
     ```
-    *(Note: Replace `https://github.com/your-username/arbitrage_pairs_trading.git` with the actual repository URL if different.)*
-
+    
 2.  **Create a virtual environment (recommended):**
     ```bash
     python -m venv venv
